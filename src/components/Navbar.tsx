@@ -81,3 +81,8 @@ const NavBar = () => {
 };
 
 export default NavBar;
+
+
+{/* <div className="hero-logo absolute top-7 left-1/2 -translate-x-1/2 z-40 flex items-center gap-3">
+<Image src={logo} alt="BMW" width={48} height={48} className="drop-shadow-[0_2px_12px_rgba(41,151,255,0.7)]" />
+</div> */}

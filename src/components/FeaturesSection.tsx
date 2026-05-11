@@ -2,43 +2,7 @@ import { bmw1, bmw2, bmw3, bmw4 } from "@/utils";
 import { useState, useRef } from "react";
 import { TiLocationArrow } from "react-icons/ti";
 import Button from "./common/Button";
-
-export const BentoTilt = ({ children, className = "" }: { children: React.ReactNode, className: string }) => {
-  const [transformStyle, setTransformStyle] = useState("");
-  const itemRef = useRef<HTMLDivElement>(null);
-
-  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (!itemRef.current) return;
-
-    const { left, top, width, height } =
-      itemRef.current.getBoundingClientRect();
-
-    const relativeX = (event.clientX - left) / width;
-    const relativeY = (event.clientY - top) / height;
-
-    const tiltX = (relativeY - 0.5) * 5;
-    const tiltY = (relativeX - 0.5) * -5;
-
-    const newTransform = `perspective(700px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale3d(.95, .95, .95)`;
-    setTransformStyle(newTransform);
-  };
-
-  const handleMouseLeave = () => {
-    setTransformStyle("");
-  };
-
-  return (
-    <div
-      ref={itemRef}
-      className={className}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{ transform: transformStyle }}
-    >
-      {children}
-    </div>
-  );
-};
+import { BentoTilt } from "./common/BentoTilt";
 
 export const BentoCard = ({
   src,
@@ -133,7 +97,7 @@ const FeaturesSection = () => (
     </div>
 
     <div className="grid w-full grid-cols-2 grid-rows-3 gap-7 mt-20">
-      <BentoTilt className="transition-all duration-300 ease-out col-span-2 row-span-1 md:row-span-2">
+      <BentoTilt className="col-span-2 row-span-1 h-full min-h-0 md:row-span-2">
         <BentoCard
           src={bmw1}
           title={
@@ -146,7 +110,7 @@ const FeaturesSection = () => (
           ctaLabel="Powertrain"
         />
       </BentoTilt>
-      <BentoTilt className="transition-all duration-300 ease-out col-span-1 row-span-1 md:row-span-2">
+      <BentoTilt className="col-span-1 row-span-1 h-full min-h-0 md:row-span-2">
         <BentoCard
           src={bmw2}
           title={
@@ -160,7 +124,7 @@ const FeaturesSection = () => (
         />
       </BentoTilt>
 
-      <BentoTilt className="transition-all duration-300 ease-out col-span-1 row-span-1">
+      <BentoTilt className="col-span-1 row-span-1 h-full min-h-0">
         <BentoCard
           src={bmw3}
           title={
@@ -174,7 +138,7 @@ const FeaturesSection = () => (
         />
       </BentoTilt>
 
-      <BentoTilt className="transition-all duration-300 ease-out col-span-2 md:col-span-1 row-span-1">
+      <BentoTilt className="col-span-2 row-span-1 h-full min-h-0 md:col-span-1">
         <BentoCard
           src={bmw4}
           title={
