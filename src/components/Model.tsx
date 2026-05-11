@@ -11,13 +11,13 @@ import { bmwColors, lightPresets } from "../constants";
 
 /* ─── Small reusable sub-components ─────────────────────────── */
 
-const SectionLabel = ({ children }) => (
+const SectionLabel = ({ children }: { children: React.ReactNode }) => (
   <p className="text-[10px] uppercase tracking-[0.22em] font-semibold text-white/40 mb-3 select-none">
     {children}
   </p>
 );
 
-const ToggleRow = ({ label, sublabel, active, onClick, icon }) => (
+const ToggleRow = ({ label, sublabel, active, onClick, icon }: { label: string, sublabel: string, active: boolean, onClick: () => void, icon: React.ReactNode }) => (
   <button
     id={`toggle-${label.toLowerCase().replace(/\s/g, '-')}`}
     onClick={onClick}
@@ -61,9 +61,9 @@ const Model = () => {
   const [passengerDoorOpen, setPassengerDoorOpen] = useState(false);
   const [autoRotate, setAutoRotate] = useState(true);
   const [selectedColor, setSelectedColor] = useState(bmwColors[0]);
-  const [eventSource, setEventSource] = useState(null);
+  const [eventSource, setEventSource] = useState<HTMLElement | null>(null);
 
-  const cameraControlRef = useRef();
+  const cameraControlRef = useRef(null);
   const carRef = useRef(new THREE.Group());
 
   useEffect(() => {
@@ -79,7 +79,7 @@ const Model = () => {
     gsap.to('#model-controls', { y: 0, opacity: 1, duration: 0.8, delay: 0.3, ease: 'power2.out' });
   }, []);
 
-  const handleZoom = (delta) => {
+  const handleZoom = (delta: number) => {
     setZoom(prev => Math.min(8, Math.max(2, parseFloat((prev + delta).toFixed(1)))));
   };
 
@@ -143,7 +143,7 @@ const Model = () => {
             <Canvas
               className="w-full h-full"
               style={{ position: 'fixed', top: 0, bottom: 0, left: 0, right: 0, overflow: 'hidden' }}
-              eventSource={eventSource}
+              eventSource={eventSource as HTMLElement}
             >
               <View.Port />
             </Canvas>
@@ -184,9 +184,8 @@ const Model = () => {
                   <button
                     key={color.label}
                     onClick={() => setSelectedColor(color)}
-                    className={`w-full aspect-square rounded-full border-2 transition-all duration-300 ${
-                      selectedColor.label === color.label ? 'border-blue-500 scale-110 shadow-[0_0_10px_rgba(59,130,246,0.5)]' : 'border-transparent opacity-60 hover:opacity-100'
-                    }`}
+                    className={`w-full aspect-square rounded-full border-2 transition-all duration-300 ${selectedColor.label === color.label ? 'border-blue-500 scale-110 shadow-[0_0_10px_rgba(59,130,246,0.5)]' : 'border-transparent opacity-60 hover:opacity-100'
+                      }`}
                     style={{ backgroundColor: color.hex }}
                     title={color.label}
                   />
@@ -222,9 +221,8 @@ const Model = () => {
                     <button
                       key={preset.value}
                       onClick={() => setLightPreset(preset.value)}
-                      className={`px-3 py-1.5 rounded-lg text-[10px] font-medium border transition-all whitespace-nowrap ${
-                        lightPreset === preset.value ? 'bg-blue-600/20 border-blue-500/50 text-blue-200' : 'bg-white/[0.04] border-white/10 text-white/40'
-                      }`}
+                      className={`px-3 py-1.5 rounded-lg text-[10px] font-medium border transition-all whitespace-nowrap ${lightPreset === preset.value ? 'bg-blue-600/20 border-blue-500/50 text-blue-200' : 'bg-white/[0.04] border-white/10 text-white/40'
+                        }`}
                     >
                       {preset.label}
                     </button>
@@ -260,27 +258,24 @@ const Model = () => {
               <div className="grid grid-cols-2 gap-2">
                 <button
                   onClick={() => setDriverDoorOpen(v => !v)}
-                  className={`p-2 rounded-xl border text-[11px] font-medium flex flex-col items-center gap-1 transition-all ${
-                    driverDoorOpen ? 'bg-white/10 border-white/30 text-white' : 'bg-white/[0.02] border-white/5 text-white/40 hover:border-white/15'
-                  }`}
+                  className={`p-2 rounded-xl border text-[11px] font-medium flex flex-col items-center gap-1 transition-all ${driverDoorOpen ? 'bg-white/10 border-white/30 text-white' : 'bg-white/[0.02] border-white/5 text-white/40 hover:border-white/15'
+                    }`}
                 >
                   <span>🚪</span>
                   <span>Driver Door</span>
                 </button>
                 <button
                   onClick={() => setPassengerDoorOpen(v => !v)}
-                  className={`p-2 rounded-xl border text-[11px] font-medium flex flex-col items-center gap-1 transition-all ${
-                    passengerDoorOpen ? 'bg-white/10 border-white/30 text-white' : 'bg-white/[0.02] border-white/5 text-white/40 hover:border-white/15'
-                  }`}
+                  className={`p-2 rounded-xl border text-[11px] font-medium flex flex-col items-center gap-1 transition-all ${passengerDoorOpen ? 'bg-white/10 border-white/30 text-white' : 'bg-white/[0.02] border-white/5 text-white/40 hover:border-white/15'
+                    }`}
                 >
                   <span>🚪</span>
                   <span>Passenger</span>
                 </button>
                 <button
                   onClick={() => setAutoRotate(v => !v)}
-                  className={`col-span-2 p-2 rounded-xl border text-[11px] font-medium flex items-center justify-center gap-2 transition-all ${
-                    autoRotate ? 'bg-blue-600/20 border-blue-500/40 text-blue-300' : 'bg-white/[0.02] border-white/5 text-white/40 hover:border-white/15'
-                  }`}
+                  className={`col-span-2 p-2 rounded-xl border text-[11px] font-medium flex items-center justify-center gap-2 transition-all ${autoRotate ? 'bg-blue-600/20 border-blue-500/40 text-blue-300' : 'bg-white/[0.02] border-white/5 text-white/40 hover:border-white/15'
+                    }`}
                 >
                   <span>🔄</span>
                   <span>{autoRotate ? 'Auto Rotation On' : 'Auto Rotation Off'}</span>
