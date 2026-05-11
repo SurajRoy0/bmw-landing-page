@@ -6,11 +6,11 @@ Source: https://sketchfab.com/3d-models/2021-bmw-m4-competition-d3f07b471d9f4a2c
 Title: 2021 BMW M4 Competition
 */
 
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, memo } from 'react'
 import { useGLTF, useAnimations } from '@react-three/drei'
 import gsap from 'gsap'
 
-export default function ModelBMW({ headlightsOn = false, tailLightsOn = false, driverDoorOpen = false, passengerDoorOpen = false, color = '#2D5A27', ...props }) {
+const ModelBMW = memo(({ headlightsOn = false, tailLightsOn = false, driverDoorOpen = false, passengerDoorOpen = false, color = '#2D5A27', ...props }) => {
   const group = useRef()
   const driverDoorRef = useRef()
   const passengerDoorRef = useRef()
@@ -39,12 +39,12 @@ export default function ModelBMW({ headlightsOn = false, tailLightsOn = false, d
     // Front headlights
     if (materials.Material_701) {
        materials.Material_701.emissive.set(headlightsOn ? '#ffffff' : '#000000');
-       materials.Material_701.emissiveIntensity = headlightsOn ? 2 : 0;
+       materials.Material_701.emissiveIntensity = headlightsOn ? 10 : 0;
     }
     // Tail lights
     if (materials.Material_279) {
-       materials.Material_279.emissive.set(tailLightsOn ? '#ff0000' : '#000000');
-       materials.Material_279.emissiveIntensity = tailLightsOn ? 2 : 0;
+       materials.Material_279.emissive.set(tailLightsOn ? '#ff1a1a' : '#000000');
+       materials.Material_279.emissiveIntensity = tailLightsOn ? 10 : 0;
     }
   }, [headlightsOn, tailLightsOn, materials])
 
@@ -1940,6 +1940,8 @@ export default function ModelBMW({ headlightsOn = false, tailLightsOn = false, d
       </group>
     </group>
   )
-}
+})
 
 useGLTF.preload('/models/bmw_m4_competition.glb')
+
+export default ModelBMW;

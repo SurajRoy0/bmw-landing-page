@@ -1,4 +1,4 @@
-import { OrbitControls, PerspectiveCamera, View } from "@react-three/drei";
+import { OrbitControls, PerspectiveCamera, View, ContactShadows } from "@react-three/drei";
 import * as THREE from 'three';
 import Loader from './Loader';
 import { Suspense } from "react";
@@ -15,6 +15,16 @@ const LIGHT_CONFIGS = {
     spot1: { pos: [-5, 12, 10], intensity: Math.PI * 2.5, color: '#ffffff' },
     spot2: { pos: [8, 10, -8], intensity: Math.PI * 1.8, color: '#dce8ff' },
     spot3: { pos: [0, -8, 5], intensity: Math.PI * 0.5, color: '#ffffff' },
+  },
+  light: {
+    bg: '#f8f8f8',
+    hemiSky: '#ffffff',
+    hemiGround: '#ffffff',
+    hemiIntensity: 1.5,
+    ambientIntensity: 1.2,
+    spot1: { pos: [5, 15, 10], intensity: Math.PI * 3, color: '#ffffff' },
+    spot2: { pos: [-8, 12, -8], intensity: Math.PI * 2, color: '#ffffff' },
+    spot3: { pos: [0, 10, 10], intensity: Math.PI * 1.5, color: '#ffffff' },
   },
   showroom: {
     bg: '#050507',
@@ -62,15 +72,17 @@ const ModelView = ({
 }) => {
   const cfg = LIGHT_CONFIGS[lightPreset] || LIGHT_CONFIGS.studio;
   const isNight = lightPreset === 'night';
+  const isLight = lightPreset === 'light';
 
   return (
     <View className="w-full h-full">
       {/* Scene background colour */}
       <color attach="background" args={[cfg.bg]} />
+      <fog attach="fog" args={[cfg.bg, 10, 25]} />
 
       {/* Hemisphere light for natural sky/ground fill */}
       <hemisphereLight
-        skyColor={cfg.hemiSky}
+        color={cfg.hemiSky}
         groundColor={cfg.hemiGround}
         intensity={cfg.hemiIntensity}
       />
@@ -87,8 +99,8 @@ const ModelView = ({
         intensity={cfg.spot1.intensity}
         color={cfg.spot1.color}
         castShadow
-        shadow-mapSize-width={2048}
-        shadow-mapSize-height={2048}
+        shadow-mapSize-width={512}
+        shadow-mapSize-height={512}
       />
       <spotLight
         position={cfg.spot2.pos}
@@ -112,14 +124,8 @@ const ModelView = ({
         <>
           <pointLight position={[0.8, 0.2, 3.0]} intensity={isNight ? 60 : 15} color="#fffbe0" distance={15} decay={2} />
           <pointLight position={[-0.8, 0.2, 3.0]} intensity={isNight ? 60 : 15} color="#fffbe0" distance={15} decay={2} />
-          <spotLight position={[0.6, 0.1, 3.2]} angle={0.25} penumbra={0.5} intensity={isNight ? 120 : 30} color="#fffbe0" distance={40} decay={1.5} />
-          <spotLight position={[-0.6, 0.1, 3.2]} angle={0.25} penumbra={0.5} intensity={isNight ? 120 : 30} color="#fffbe0" distance={40} decay={1.5} />
-          
-          {/* Ground light streak when headlights on */}
-          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.49, 3.5]}>
-            <planeGeometry args={[4, 10]} />
-            <meshBasicMaterial color="#fffbe0" transparent opacity={isNight ? 0.08 : 0.02} />
-          </mesh>
+          <spotLight position={[0.6, 0.1, 3.2]} angle={0.25} penumbra={0.5} intensity={isNight ? 80 : 20} color="#fffbe0" distance={40} decay={1.5} />
+          <spotLight position={[-0.6, 0.1, 3.2]} angle={0.25} penumbra={0.5} intensity={isNight ? 80 : 20} color="#fffbe0" distance={40} decay={1.5} />
         </>
       )}
 
@@ -147,13 +153,22 @@ const ModelView = ({
         autoRotateSpeed={0.6}
       />
 
-      {/* Ground plane */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.5, 0]} receiveShadow>
-        <planeGeometry args={[50, 50]} />
+      {/* High-Performance Shadows & Floor */}
+      <ContactShadows
+        position={[0, -1.49, 0]}
+        opacity={isLight ? 0.3 : 0.6}
+        scale={20}
+        blur={2.5}
+        far={4}
+      />
+
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.5, 0]}>
+        <planeGeometry args={[100, 100]} />
         <meshStandardMaterial
-          color={isNight ? '#030308' : '#0a0a0c'}
-          metalness={0.9}
-          roughness={0.1}
+          color={cfg.bg}
+          metalness={isLight ? 0.0 : 0.4}
+          roughness={isLight ? 1.0 : 0.2}
+          envMapIntensity={0.5}
         />
       </mesh>
 
