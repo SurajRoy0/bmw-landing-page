@@ -21,10 +21,10 @@ export default function SmoothScroll() {
     const lenis = new Lenis({
       autoRaf: false,
       smoothWheel: true,
-      // Lower lerp = scroll eases in more slowly behind the wheel
-      lerp: 0.055,
-      wheelMultiplier: 0.78,
-      touchMultiplier: 0.88,
+      // Slightly higher lerp = more responsive
+      lerp: 0.12,
+      wheelMultiplier: 1.0,
+      touchMultiplier: 1.2,
     });
 
     const onLenisScroll = () => {

@@ -156,7 +156,7 @@ const Model = () => {
 
             <Canvas
               className="w-full h-full"
-              style={{ position: 'fixed', top: 0, bottom: 0, left: 0, right: 0, overflow: 'hidden' }}
+              style={{ position: 'fixed', top: 0, bottom: 0, left: 0, right: 0, overflow: 'hidden', pointerEvents: 'none' }}
               eventSource={eventSource as HTMLElement}
             >
               <View.Port />

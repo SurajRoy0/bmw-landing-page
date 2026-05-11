@@ -37,7 +37,7 @@ function HeroModelTitleStack({
   return (
     <div
       {...(scrollSync ? { "data-hero-scroll-model": true } : {})}
-      className={`absolute top-34 left-5 max-w-[min(92vw,56rem)] ${text} ${z} ${back} ${passThrough}`}
+      className={`absolute top-28 left-5 max-w-[min(92vw,56rem)] sm:left-10 sm:top-32 md:top-36 ${text} ${z} ${back} ${passThrough} will-change-transform`}
     >
       {MODEL_LINES.map((word) => (
         <div key={word} className="overflow-hidden">
@@ -53,8 +53,8 @@ function HeroModelTitleStack({
         className={`mt-3 h-0.5 w-48 bg-gradient-to-r ${tone === "light" ? "from-white to-transparent" : "from-blue-600 to-transparent"}`}
         aria-hidden
       />
-      <p className={`text-sm mt-2 ${tone === "light" ? "text-white" : "text-blue-600"}`}>
-        The most capable M4 ever built — now yours to explore. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
+      <p className={`text-sm mt-2 max-w-sm ${tone === "light" ? "text-white/80" : "text-blue-600/80"}`}>
+        The most capable M4 ever built — now yours to explore. Precision engineering meets raw power.
       </p>
     </div>
   );
@@ -101,7 +101,7 @@ const HeroSection = () => {
           width: "100%",
           height: "100%",
           duration: 1,
-          ease: "power1.inOut",
+          ease: "power2.inOut",
           onStart: () => {
             void expandVideoRef.current?.play();
           },
@@ -110,7 +110,7 @@ const HeroSection = () => {
           transformOrigin: "center center",
           scale: 0,
           duration: 1.5,
-          ease: "power1.inOut",
+          ease: "power2.inOut",
         });
       }
     },
@@ -158,11 +158,11 @@ const HeroSection = () => {
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: "#hero-section",
-        start: "center center",
-        end: "bottom 10%",
+        start: "top top",
+        end: "bottom top",
         pin: true,
         pinSpacing: true,
-        scrub: 1,
+        scrub: true,
       },
     });
 
@@ -192,7 +192,7 @@ const HeroSection = () => {
     <div
       id="hero-section"
       ref={sectionRef}
-      className="relative h-dvh w-screen overflow-x-hidden flex justify-center items-center"
+      className="relative h-screen w-screen overflow-x-hidden"
     >
       {loading && <Loader />}
 
@@ -247,7 +247,7 @@ const HeroSection = () => {
       {/* ── Video Frame ── */}
       <div
         id="video-frame"
-        className="relative z-10 h-dvh w-screen overflow-hidden bg-zinc-900 "
+        className="relative z-10 h-screen w-screen overflow-hidden bg-zinc-900 will-change-transform"
       >
         <div className="absolute w-[60vw] h-full left-0 top-0 bottom-0 z-10 bg-gradient-to-r from-black/50 to-transparent" />
         {/* Dark gradient overlay (intensifies on scroll) */}
