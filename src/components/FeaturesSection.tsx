@@ -1,4 +1,4 @@
-import { bmw1, bmw2, bmw3, bmw4, bmw5, bmw6, bmw7 } from "@/utils";
+import { bmw1, bmw2, bmw3, bmw4 } from "@/utils";
 import { useState, useRef } from "react";
 import { TiLocationArrow } from "react-icons/ti";
 import Button from "./common/Button";
@@ -102,75 +102,75 @@ export const BentoCard = ({ src, title, description, isComingSoon }: { src: stri
 
 const FeaturesSection = () => (
   <section className="bg-black mx-auto px-10 md:px-[10%] py-32">
-      <div className="px-5">
-        <p className="font-circular-web text-lg text-blue-50">
-          Into the Metagame Layer
-        </p>
-        <p className="max-w-md font-circular-web text-md text-blue-50 opacity-50">
-          Immerse yourself in a rich and ever-expanding universe where a vibrant
-          array of products converge into an interconnected overlay experience
-          on your world.
-        </p>
-        <Button
-          id="watch-trailer"
-          title="Watch trailer"
-          leftIcon={<TiLocationArrow className="text-xl mb-[2px]" />}
-          containerClass="bg-yellow-300 flex justify-center items-center gap-1 mt-7"
+    <div className="px-5">
+      <p className="font-circular-web text-lg text-blue-50">
+        Into the Metagame Layer
+      </p>
+      <p className="max-w-md font-circular-web text-md text-blue-50 opacity-50">
+        Immerse yourself in a rich and ever-expanding universe where a vibrant
+        array of products converge into an interconnected overlay experience
+        on your world.
+      </p>
+      <Button
+        id="watch-trailer"
+        title="Watch trailer"
+        leftIcon={<TiLocationArrow className="text-xl mb-[2px]" />}
+        containerClass="bg-yellow-300 flex justify-center items-center gap-1 mt-7"
+      />
+    </div>
+
+    <div className="grid w-full grid-cols-2 grid-rows-3 gap-7 mt-20">
+      <BentoTilt className="transition-all duration-300 ease-out col-span-2 row-span-1 md:row-span-2">
+        <BentoCard
+          src={bmw1}
+          title={
+            <>
+              zig<b>m</b>a
+            </>
+          }
+          description="An anime and gaming-inspired NFT collection - the IP primed for expansion."
+          isComingSoon
         />
-      </div>
+      </BentoTilt>
+      <BentoTilt className="transition-all duration-300 ease-out col-span-1 row-span-1 md:row-span-2">
+        <BentoCard
+          src={bmw2}
+          title={
+            <>
+              zig<b>m</b>a
+            </>
+          }
+          description="An anime and gaming-inspired NFT collection - the IP primed for expansion."
+          isComingSoon
+        />
+      </BentoTilt>
 
-      <div className="grid w-full grid-cols-2 grid-rows-3 gap-7 mt-20">
-        <BentoTilt className="transition-all duration-300 ease-out col-span-2 row-span-1 md:row-span-2">
-          <BentoCard
-            src={bmw1}
-            title={
-              <>
-                zig<b>m</b>a
-              </>
-            }
-            description="An anime and gaming-inspired NFT collection - the IP primed for expansion."
-            isComingSoon
-          />
-        </BentoTilt>
-        <BentoTilt className="transition-all duration-300 ease-out col-span-1 row-span-1 md:row-span-2">
-          <BentoCard
-            src={bmw2}
-            title={
-              <>
-                zig<b>m</b>a
-              </>
-            }
-            description="An anime and gaming-inspired NFT collection - the IP primed for expansion."
-            isComingSoon
-          />
-        </BentoTilt>
+      <BentoTilt className="transition-all duration-300 ease-out col-span-1 row-span-1">
+        <BentoCard
+          src={bmw3}
+          title={
+            <>
+              n<b>e</b>xus
+            </>
+          }
+          description="A gamified social hub, adding a new dimension of play to social interaction for Web3 communities."
+          isComingSoon
+        />
+      </BentoTilt>
 
-        <BentoTilt className="transition-all duration-300 ease-out col-span-1 row-span-1">
-          <BentoCard
-            src={bmw3}
-            title={
-              <>
-                n<b>e</b>xus
-              </>
-            }
-            description="A gamified social hub, adding a new dimension of play to social interaction for Web3 communities."
-            isComingSoon
-          />
-        </BentoTilt>
-
-        <BentoTilt className="transition-all duration-300 ease-out col-span-2 md:col-span-1 row-span-1">
-          <BentoCard
-            src={bmw4}
-            title={
-              <>
-                az<b>u</b>l
-              </>
-            }
-            description="A cross-world AI Agent - elevating your gameplay."
-            isComingSoon
-          />
-        </BentoTilt>
-      </div>
+      <BentoTilt className="transition-all duration-300 ease-out col-span-2 md:col-span-1 row-span-1">
+        <BentoCard
+          src={bmw4}
+          title={
+            <>
+              az<b>u</b>l
+            </>
+          }
+          description="A cross-world AI Agent - elevating your gameplay."
+          isComingSoon
+        />
+      </BentoTilt>
+    </div>
   </section>
 );
 

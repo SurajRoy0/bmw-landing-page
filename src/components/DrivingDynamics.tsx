@@ -239,7 +239,7 @@ const DrivingDynamics = () => {
               Precision Engineering
             </p>
             <p className="text-white/80 text-lg lg:text-xl font-light leading-relaxed mb-6">
-              The BMW M4 Competition doesn't just move — it{" "}
+              The BMW M4 Competition doesn&apos;t just move — it{" "}
               <span className="text-white font-semibold">commands</span>. With a
               twin-turbocharged inline-six S58 engine producing 503 hp and 479 lb·ft
               of torque, every drive is an event.

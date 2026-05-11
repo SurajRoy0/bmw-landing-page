@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import Button from "./common/Button";
 import VideoPreview from "./common/VideoPreview";
 import Loader from "./common/loader";
-import { bmw1, bmw2, bmw3, bmw4, bmw5, bmw6, bmw7, bmw8, bmw9, heroVideo1, heroVideo2, heroVideo3, heroVideo4 } from "@/utils";
+import { bmw5, bmw6, bmw7, bmw9 } from "@/utils";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -186,7 +186,7 @@ const HeroSection = () => {
         </h1>
 
         <div className="top-hero-content absolute bottom-5 left-5 z-40 max-w-[800px]">
-        <Button
+          <Button
             id="watch-trailer"
             title="Watch trailer"
             leftIcon={<TiLocationArrow className="text-xl mb-[2px]" />}
