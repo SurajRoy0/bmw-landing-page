@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import * as THREE from 'three';
 import { Canvas } from "@react-three/fiber";
 import { View } from "@react-three/drei";
-import { bmwColors, lightPresets } from "../constants";
+import { bmwColors } from "../constants";
 
 /* ─── Small reusable sub-components ─────────────────────────── */
 
@@ -57,7 +57,6 @@ const ToggleRow = ({ label, sublabel, active, onClick, icon }: { label: string, 
 
 const Model = () => {
   const [zoom, setZoom] = useState(4.5);
-  const [lightPreset, setLightPreset] = useState('studio');
   const [headlightsOn, setHeadlightsOn] = useState(false);
   const [tailLightsOn, setTailLightsOn] = useState(false);
   const [driverDoorOpen, setDriverDoorOpen] = useState(false);
@@ -85,8 +84,6 @@ const Model = () => {
   const handleZoom = (delta: number) => {
     setZoom(prev => Math.min(8, Math.max(2, parseFloat((prev + delta).toFixed(1)))));
   };
-
-  const zoomPercent = Math.round(((zoom - 2) / 6) * 100);
 
   // SVG Icons
   const Icons = {
@@ -146,7 +143,6 @@ const Model = () => {
               groupRef={carRef}
               controlRef={cameraControlRef}
               zoom={zoom}
-              lightPreset={lightPreset}
               headlightsOn={headlightsOn}
               tailLightsOn={tailLightsOn}
               driverDoorOpen={driverDoorOpen}
@@ -220,22 +216,6 @@ const Model = () => {
                     <span className="text-[10px] font-black text-blue-500/80 tracking-tighter">{zoom.toFixed(1)}m</span>
                     <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest">Wide</span>
                   </div>
-                </div>
-              </div>
-
-              <div>
-                <SectionLabel>Environment Preset</SectionLabel>
-                <div className="flex flex-wrap gap-2">
-                  {lightPresets.map(preset => (
-                    <button
-                      key={preset.value}
-                      onClick={() => setLightPreset(preset.value)}
-                      className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border transition-all duration-500 ${lightPreset === preset.value ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/20' : 'bg-white/[0.02] border-white/5 text-zinc-500 hover:border-white/20'
-                        }`}
-                    >
-                      {preset.label}
-                    </button>
-                  ))}
                 </div>
               </div>
             </div>

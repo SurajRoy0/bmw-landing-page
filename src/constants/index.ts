@@ -51,14 +51,6 @@ export const bmwColors = [
   { label: "Sao Paulo Yellow", hex: "#E9F13B" },
 ];
 
-export const lightPresets = [
-  { label: "Studio", value: "studio" },
-  { label: "Light Mode", value: "light" },
-  { label: "Showroom", value: "showroom" },
-  { label: "Night", value: "night" },
-  { label: "Outdoor", value: "outdoor" },
-];
-
 export const footerLinks = [
   "Privacy Policy",
   "Terms of Use",
