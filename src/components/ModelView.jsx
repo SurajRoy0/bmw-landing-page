@@ -7,44 +7,44 @@ import ModelBMW from "./BMW-M4";
 // Lighting configurations — no external HDR needed, all local lights
 const LIGHT_CONFIGS = {
   studio: {
-    bg: '#141416',
-    hemiSky: '#c8d8ff',
-    hemiGround: '#1a1a2a',
-    hemiIntensity: 0.6,
-    ambientIntensity: 0.4,
-    spot1: { pos: [-3, 8, 5], intensity: Math.PI * 0.9, color: '#ffffff' },
-    spot2: { pos: [3, 6, -5], intensity: Math.PI * 0.5, color: '#dce8ff' },
-    spot3: { pos: [0, -6, 4], intensity: Math.PI * 0.2, color: '#ffffff' },
+    bg: '#0a0a0c',
+    hemiSky: '#ffffff',
+    hemiGround: '#222233',
+    hemiIntensity: 1.2,
+    ambientIntensity: 0.8,
+    spot1: { pos: [-5, 12, 10], intensity: Math.PI * 2.5, color: '#ffffff' },
+    spot2: { pos: [8, 10, -8], intensity: Math.PI * 1.8, color: '#dce8ff' },
+    spot3: { pos: [0, -8, 5], intensity: Math.PI * 0.5, color: '#ffffff' },
   },
   showroom: {
-    bg: '#0d0d0f',
+    bg: '#050507',
     hemiSky: '#ffe8c0',
     hemiGround: '#1a1208',
-    hemiIntensity: 0.5,
-    ambientIntensity: 0.5,
-    spot1: { pos: [0, 10, 0], intensity: Math.PI * 1.2, color: '#fff5d8' },
-    spot2: { pos: [-5, 5, 3], intensity: Math.PI * 0.6, color: '#ffe0a0' },
-    spot3: { pos: [5, 5, -3], intensity: Math.PI * 0.5, color: '#fff0c0' },
+    hemiIntensity: 1.0,
+    ambientIntensity: 1.0,
+    spot1: { pos: [0, 15, 0], intensity: Math.PI * 3.5, color: '#fff5d8' },
+    spot2: { pos: [-8, 8, 5], intensity: Math.PI * 2.2, color: '#ffe0a0' },
+    spot3: { pos: [8, 8, -5], intensity: Math.PI * 2.0, color: '#fff0c0' },
   },
   night: {
-    bg: '#04040a',
+    bg: '#020204',
     hemiSky: '#0a1833',
     hemiGround: '#000005',
-    hemiIntensity: 0.15,
-    ambientIntensity: 0.04,
-    spot1: { pos: [0, 6, 2], intensity: Math.PI * 0.25, color: '#5599ff' },
-    spot2: { pos: [-4, 3, -2], intensity: Math.PI * 0.12, color: '#334477' },
-    spot3: { pos: [4, 2, 2], intensity: Math.PI * 0.08, color: '#445588' },
+    hemiIntensity: 0.4,
+    ambientIntensity: 0.15,
+    spot1: { pos: [0, 8, 4], intensity: Math.PI * 0.8, color: '#5599ff' },
+    spot2: { pos: [-6, 5, -4], intensity: Math.PI * 0.4, color: '#334477' },
+    spot3: { pos: [6, 4, 4], intensity: Math.PI * 0.3, color: '#445588' },
   },
   outdoor: {
     bg: '#0a0e14',
     hemiSky: '#d0e8ff',
-    hemiGround: '#1a2808',
-    hemiIntensity: 1.0,
-    ambientIntensity: 0.7,
-    spot1: { pos: [5, 12, 5], intensity: Math.PI * 1.8, color: '#fff8e0' },
-    spot2: { pos: [-3, 5, -3], intensity: Math.PI * 0.5, color: '#b0d0ff' },
-    spot3: { pos: [0, -4, 5], intensity: Math.PI * 0.25, color: '#c8e0ff' },
+    hemiGround: '#2a3818',
+    hemiIntensity: 2.0,
+    ambientIntensity: 1.5,
+    spot1: { pos: [10, 20, 10], intensity: Math.PI * 5.0, color: '#fff8e0' },
+    spot2: { pos: [-8, 10, -8], intensity: Math.PI * 1.5, color: '#b0d0ff' },
+    spot3: { pos: [0, -5, 10], intensity: Math.PI * 0.8, color: '#c8e0ff' },
   },
 };
 
@@ -54,16 +54,18 @@ const ModelView = ({
   zoom = 4.5,
   lightPreset = 'studio',
   headlightsOn = false,
+  tailLightsOn = false,
   driverDoorOpen = false,
   passengerDoorOpen = false,
   autoRotate = true,
+  color = '#2D5A27'
 }) => {
   const cfg = LIGHT_CONFIGS[lightPreset] || LIGHT_CONFIGS.studio;
   const isNight = lightPreset === 'night';
 
   return (
     <View className="w-full h-full">
-      {/* Scene background colour — no HDR/network fetch needed */}
+      {/* Scene background colour */}
       <color attach="background" args={[cfg.bg]} />
 
       {/* Hemisphere light for natural sky/ground fill */}
@@ -105,16 +107,27 @@ const ModelView = ({
         color={cfg.spot3.color}
       />
 
-      {/* Headlights — front white beams + red tail lights */}
+      {/* Headlights — front white beams */}
       {headlightsOn && (
         <>
-          <pointLight position={[0.8, 0.2, 3.0]} intensity={isNight ? 40 : 8} color="#fffbe0" distance={12} decay={2} />
-          <pointLight position={[-0.8, 0.2, 3.0]} intensity={isNight ? 40 : 8} color="#fffbe0" distance={12} decay={2} />
-          <spotLight position={[0.6, 0.1, 3.2]} angle={0.18} penumbra={0.3} intensity={isNight ? 80 : 15} color="#fffbe0" distance={30} decay={1.5} />
-          <spotLight position={[-0.6, 0.1, 3.2]} angle={0.18} penumbra={0.3} intensity={isNight ? 80 : 15} color="#fffbe0" distance={30} decay={1.5} />
-          {/* Tail lights */}
-          <pointLight position={[0.7, 0.3, -3.0]} intensity={isNight ? 12 : 3} color="#ff1a1a" distance={5} decay={2} />
-          <pointLight position={[-0.7, 0.3, -3.0]} intensity={isNight ? 12 : 3} color="#ff1a1a" distance={5} decay={2} />
+          <pointLight position={[0.8, 0.2, 3.0]} intensity={isNight ? 60 : 15} color="#fffbe0" distance={15} decay={2} />
+          <pointLight position={[-0.8, 0.2, 3.0]} intensity={isNight ? 60 : 15} color="#fffbe0" distance={15} decay={2} />
+          <spotLight position={[0.6, 0.1, 3.2]} angle={0.25} penumbra={0.5} intensity={isNight ? 120 : 30} color="#fffbe0" distance={40} decay={1.5} />
+          <spotLight position={[-0.6, 0.1, 3.2]} angle={0.25} penumbra={0.5} intensity={isNight ? 120 : 30} color="#fffbe0" distance={40} decay={1.5} />
+          
+          {/* Ground light streak when headlights on */}
+          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.49, 3.5]}>
+            <planeGeometry args={[4, 10]} />
+            <meshBasicMaterial color="#fffbe0" transparent opacity={isNight ? 0.08 : 0.02} />
+          </mesh>
+        </>
+      )}
+
+      {/* Tail lights — red rear glow */}
+      {tailLightsOn && (
+        <>
+          <pointLight position={[0.7, 0.3, -3.0]} intensity={isNight ? 20 : 5} color="#ff1a1a" distance={8} decay={2} />
+          <pointLight position={[-0.7, 0.3, -3.0]} intensity={isNight ? 20 : 5} color="#ff1a1a" distance={8} decay={2} />
         </>
       )}
 
@@ -126,7 +139,7 @@ const ModelView = ({
         ref={controlRef}
         enableZoom={false}
         enablePan={false}
-        rotateSpeed={0.45}
+        rotateSpeed={0.5}
         target={new THREE.Vector3(0, 0, 0)}
         minPolarAngle={0.1}
         maxPolarAngle={Math.PI / 2 - 0.05}
@@ -136,21 +149,13 @@ const ModelView = ({
 
       {/* Ground plane */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.5, 0]} receiveShadow>
-        <planeGeometry args={[30, 30]} />
+        <planeGeometry args={[50, 50]} />
         <meshStandardMaterial
-          color={isNight ? '#06060e' : '#111114'}
-          metalness={isNight ? 0.85 : 0.4}
-          roughness={isNight ? 0.15 : 0.7}
+          color={isNight ? '#030308' : '#0a0a0c'}
+          metalness={0.9}
+          roughness={0.1}
         />
       </mesh>
-
-      {/* Ground light streak when headlights on at night */}
-      {headlightsOn && isNight && (
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.49, 2]}>
-          <planeGeometry args={[3, 8]} />
-          <meshBasicMaterial color="#fffbe0" transparent opacity={0.04} />
-        </mesh>
-      )}
 
       <group ref={groupRef} position={[0, 0, 0]}>
         <Suspense fallback={<Loader />}>
@@ -158,8 +163,10 @@ const ModelView = ({
             scale={[0.7, 0.7, 0.7]}
             position={[0, -1, 0]}
             headlightsOn={headlightsOn}
+            tailLightsOn={tailLightsOn}
             driverDoorOpen={driverDoorOpen}
             passengerDoorOpen={passengerDoorOpen}
+            color={color}
           />
         </Suspense>
       </group>

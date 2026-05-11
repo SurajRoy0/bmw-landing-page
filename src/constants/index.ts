@@ -47,6 +47,8 @@ export const bmwColors = [
   { label: "M Portimao Blue", hex: "#1C3F6E" },
   { label: "Alpine White", hex: "#F0EEE9" },
   { label: "Sapphire Black", hex: "#0F0F12" },
+  { label: "Toronto Red", hex: "#B31B1B" },
+  { label: "Sao Paulo Yellow", hex: "#E9F13B" },
 ];
 
 export const lightPresets = [
