@@ -188,12 +188,13 @@ const HeroSection = () => {
         <div className="top-hero-content absolute bottom-5 left-5 z-40 max-w-[800px]">
           <Button
             id="watch-trailer"
-            title="Watch trailer"
-            leftIcon={<TiLocationArrow className="text-xl mb-[2px]" />}
-            containerClass="bg-yellow-300 flex justify-center items-center gap-1 mb-4"
+            title="Experience M4"
+            leftIcon={<TiLocationArrow className="text-xl mb-[1px]" />}
+            variant="primary"
+            containerClass="mb-4"
           />
-          <p className="text-sm text-white">
-            Enter the Metagame Layer Unleash the Play Economy. Enter the Metagame Layer Unleash the Play Economy, Enter the Metagame Layer Unleash the Play Economy.
+          <p className="text-sm text-white/70 max-w-sm leading-relaxed">
+            503 hp. Twin-turbo S58. M xDrive. The most capable M4 ever built — now yours to explore.
           </p>
         </div>
       </div>

@@ -159,9 +159,16 @@ const BmwFooter = () => {
               />
               <button
                 id="footer-subscribe"
-                className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold uppercase tracking-widest px-5 py-3 rounded-xl transition-all duration-300 whitespace-nowrap"
+                className="group relative overflow-hidden bg-blue-600 hover:bg-blue-500 active:scale-[0.97] text-white text-xs font-bold uppercase tracking-widest px-5 py-3 rounded-xl border border-blue-500/60 hover:border-blue-400/80 hover:shadow-[0_0_28px_-6px_rgba(59,130,246,0.5)] transition-all duration-300 whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-blue-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
               >
-                Subscribe
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-y-0 -left-full w-1/2 skew-x-[-18deg] bg-gradient-to-r from-transparent via-white/[0.16] to-transparent opacity-0 transition-all duration-700 group-hover:left-[140%] group-hover:opacity-100"
+                />
+                <span className="relative inline-flex overflow-hidden">
+                  <span className="block transition duration-500 group-hover:translate-y-[-160%] group-hover:skew-y-12">Subscribe</span>
+                  <span className="absolute block translate-y-[164%] skew-y-12 transition duration-500 group-hover:translate-y-0 group-hover:skew-y-0">Subscribe</span>
+                </span>
               </button>
             </div>
           </div>

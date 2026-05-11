@@ -13,29 +13,6 @@ import { driverDoorImg, headLightImg, passengerDoorImg, tailLightImg } from "../
 
 /* ─── Small reusable sub-components ─────────────────────────── */
 
-/**
- * Custom tooltips: native `title` is delayed and ancestors with overflow clip them.
- * Uses `peer` on the trigger so `peer-hover` / `peer-focus-visible` / `peer-active` work (active helps touch).
- */
-const Tooltip = ({ text, children }: { text: string; children: React.ReactNode }) => (
-  <span className="relative inline-flex align-middle touch-manipulation">
-    {children}
-    <span
-      role="tooltip"
-      className={`
-        pointer-events-none absolute left-1/2 z-[100] w-max max-w-[min(90vw,16rem)] -translate-x-1/2 rounded-lg border border-white/12
-        bg-zinc-950/98 px-2.5 py-1.5 text-left text-[11px] font-medium leading-snug text-zinc-100 shadow-xl backdrop-blur-md
-        opacity-0 transition-opacity duration-150 ease-out
-        top-full mt-2 md:top-auto md:mt-0 md:bottom-[calc(100%+10px)]
-        peer-hover:opacity-100 peer-hover:delay-75
-        peer-focus-visible:opacity-100 peer-focus-visible:delay-0
-        peer-active:opacity-100 peer-active:delay-0
-      `}
-    >
-      {text}
-    </span>
-  </span>
-);
 
 const IconToggle = ({
   id,
@@ -85,7 +62,7 @@ const GroupRule = () => (
 /* ─── Main Model Component ───────────────────────────────────── */
 
 const Model = () => {
-  const [zoom, setZoom] = useState(4.5);
+  const [zoom, setZoom] = useState(5);
   const [headlightsOn, setHeadlightsOn] = useState(false);
   const [tailLightsOn, setTailLightsOn] = useState(false);
   const [driverDoorOpen, setDriverDoorOpen] = useState(false);
@@ -209,31 +186,30 @@ const Model = () => {
                 </span>
                 <div className="flex shrink-0 items-center gap-2">
                   {bmwColors.map((color) => (
-                    <Tooltip key={color.label} text={`${color.label} — Metallic`}>
-                      <button
-                        type="button"
-                        onClick={() => setSelectedColor(color)}
-                        title={`${color.label} — Metallic`}
-                        aria-label={`${color.label} — Metallic`}
-                        className={`
+                    <button
+                      key={color.label}
+                      type="button"
+                      onClick={() => setSelectedColor(color)}
+                      title={`${color.label} — Metallic`}
+                      aria-label={`${color.label} — Metallic`}
+                      className={`
                           peer relative h-6 w-6 shrink-0 rounded-md transition-all duration-300 outline-none
                           max-md:h-5 max-md:w-5
                           md:h-8 md:w-8 md:rounded-lg
                           focus-visible:ring-2 focus-visible:ring-blue-500/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0a]
                           ${selectedColor.label === color.label
-                            ? 'ring-2 ring-blue-500 ring-offset-1 ring-offset-[#0c0c0c] md:ring-offset-2 md:scale-95'
-                            : 'opacity-45 hover:opacity-100 hover:scale-105'
-                          }
+                          ? 'ring-2 ring-blue-500 ring-offset-1 ring-offset-[#0c0c0c] md:ring-offset-2 md:scale-95'
+                          : 'opacity-45 hover:opacity-100 hover:scale-105'
+                        }
                         `}
-                        style={{ backgroundColor: color.hex }}
-                      >
-                        {selectedColor.label === color.label && (
-                          <span className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                            <span className="h-0.5 w-0.5 rounded-full bg-white shadow-sm md:h-1 md:w-1" />
-                          </span>
-                        )}
-                      </button>
-                    </Tooltip>
+                      style={{ backgroundColor: color.hex }}
+                    >
+                      {selectedColor.label === color.label && (
+                        <span className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                          <span className="h-0.5 w-0.5 rounded-full bg-white shadow-sm md:h-1 md:w-1" />
+                        </span>
+                      )}
+                    </button>
                   ))}
                 </div>
               </div>

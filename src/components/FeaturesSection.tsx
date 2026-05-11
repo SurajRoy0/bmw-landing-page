@@ -40,7 +40,19 @@ export const BentoTilt = ({ children, className = "" }: { children: React.ReactN
   );
 };
 
-export const BentoCard = ({ src, title, description, isComingSoon }: { src: string, title: React.ReactNode, description: string, isComingSoon: boolean }) => {
+export const BentoCard = ({
+  src,
+  title,
+  description,
+  isComingSoon,
+  ctaLabel = "Learn more",
+}: {
+  src: string;
+  title: React.ReactNode;
+  description: string;
+  isComingSoon: boolean;
+  ctaLabel?: string;
+}) => {
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const [hoverOpacity, setHoverOpacity] = useState(0);
   const hoverButtonRef = useRef<HTMLDivElement>(null);
@@ -81,7 +93,7 @@ export const BentoCard = ({ src, title, description, isComingSoon }: { src: stri
             onMouseMove={handleMouseMove}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
-            className="relative flex w-fit cursor-pointer items-center gap-1 overflow-hidden rounded-full bg-black px-5 py-2 text-xs uppercase text-white/20"
+            className="group relative flex w-fit cursor-pointer items-center gap-1.5 overflow-hidden rounded-full bg-black/70 border border-white/10 hover:border-blue-500/50 hover:bg-blue-600/15 hover:shadow-[0_0_20px_-6px_rgba(59,130,246,0.4)] px-5 py-2 text-xs uppercase text-white/30 hover:text-white/80 transition-all duration-300"
           >
             {/* Radial gradient hover effect */}
             <div
@@ -92,7 +104,7 @@ export const BentoCard = ({ src, title, description, isComingSoon }: { src: stri
               }}
             />
             <TiLocationArrow className="relative z-20" />
-            <p className="relative z-20">coming soon</p>
+            <p className="relative z-20">{ctaLabel}</p>
           </div>
         )}
       </div>
@@ -104,18 +116,19 @@ const FeaturesSection = () => (
   <section className="bg-black mx-auto px-10 md:px-[10%] py-32">
     <div className="px-5">
       <p className="font-circular-web text-lg text-blue-50">
-        Into the Metagame Layer
+        BMW M4 · Competition DNA
       </p>
       <p className="max-w-md font-circular-web text-md text-blue-50 opacity-50">
-        Immerse yourself in a rich and ever-expanding universe where a vibrant
-        array of products converge into an interconnected overlay experience
-        on your world.
+        From the S58 straight-six to M xDrive and Competition tuning, every
+        system is built for precision, feedback, and the kind of throttle response
+        that turns commutes into hot laps.
       </p>
       <Button
-        id="watch-trailer"
-        title="Watch trailer"
-        leftIcon={<TiLocationArrow className="text-xl mb-[2px]" />}
-        containerClass="bg-yellow-300 flex justify-center items-center gap-1 mt-7"
+        id="m4-highlights"
+        title="See highlights"
+        leftIcon={<TiLocationArrow className="text-xl mb-[1px]" />}
+        variant="primary"
+        containerClass="mt-7"
       />
     </div>
 
@@ -125,11 +138,12 @@ const FeaturesSection = () => (
           src={bmw1}
           title={
             <>
-              zig<b>m</b>a
+              S58 <b>S</b>ix
             </>
           }
-          description="An anime and gaming-inspired NFT collection - the IP primed for expansion."
+          description="Twin-scroll turbochargers, 503 hp, and a soundtrack tuned for the redline—M’s inline-six at its sharpest."
           isComingSoon
+          ctaLabel="Powertrain"
         />
       </BentoTilt>
       <BentoTilt className="transition-all duration-300 ease-out col-span-1 row-span-1 md:row-span-2">
@@ -137,11 +151,12 @@ const FeaturesSection = () => (
           src={bmw2}
           title={
             <>
-              zig<b>m</b>a
+              M <b>X</b>Drive
             </>
           }
-          description="An anime and gaming-inspired NFT collection - the IP primed for expansion."
+          description="Rear-biased all-wheel drive that can send torque where grip lives—confident in the wet, playful when you want it."
           isComingSoon
+          ctaLabel="Traction"
         />
       </BentoTilt>
 
@@ -150,11 +165,12 @@ const FeaturesSection = () => (
           src={bmw3}
           title={
             <>
-              n<b>e</b>xus
+              G<b>8</b>2 Form
             </>
           }
-          description="A gamified social hub, adding a new dimension of play to social interaction for Web3 communities."
+          description="Wide stance, carbon roof, and Competition aero that isn’t just for looks—it keeps the M4 planted at speed."
           isComingSoon
+          ctaLabel="Design"
         />
       </BentoTilt>
 
@@ -163,11 +179,12 @@ const FeaturesSection = () => (
           src={bmw4}
           title={
             <>
-              az<b>u</b>l
+              Track <b>M</b>ode
             </>
           }
-          description="A cross-world AI Agent - elevating your gameplay."
+          description="Adaptive M suspension, M Servotronic steering, and configurable M modes so road and circuit each get their own setup."
           isComingSoon
+          ctaLabel="Dynamics"
         />
       </BentoTilt>
     </div>
