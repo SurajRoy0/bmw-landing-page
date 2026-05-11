@@ -4,7 +4,10 @@ import right from "../../public/images/right.svg";
 import replay from "../../public/images/replay.svg";
 import play from "../../public/images/play.svg";
 import pause from "../../public/images/pause.svg";
-
+import tailLight from "../../public/images/tail-light.svg";
+import headLight from "../../public/images/head-light.svg";
+import passengerDoor from "../../public/images/passenger-door.svg";
+import driverDoor from "../../public/images/driver-door.svg";
 import bmwLogo from "../../public/bmw-logo.svg";
 import bmwLogoPlain from "../../public/bmw-logo-plain.svg";
 
@@ -45,7 +48,10 @@ export const bmw9 = "/videos/bmw/bmw9.mp4";
 
 export const logo = bmwLogo;
 export const logoPlain = bmwLogoPlain;
-
+export const tailLightImg = tailLight;
+export const headLightImg = headLight;
+export const passengerDoorImg = passengerDoor;
+export const driverDoorImg = driverDoor;
 
 export const searchImg = search;
 export const watchImg = watch;

@@ -2,55 +2,84 @@
 
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import Image from "next/image";
 import ModelView from "./ModelView";
 import { useEffect, useRef, useState } from "react";
 import * as THREE from 'three';
 import { Canvas } from "@react-three/fiber";
 import { View } from "@react-three/drei";
 import { bmwColors } from "../constants";
+import { driverDoorImg, headLightImg, passengerDoorImg, tailLightImg } from "../utils";
 
 /* ─── Small reusable sub-components ─────────────────────────── */
 
-/* ─── Small reusable sub-components ─────────────────────────── */
-
-const SectionLabel = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-[10px] uppercase tracking-[0.25em] font-bold text-white/50 mb-4 select-none">
+/**
+ * Custom tooltips: native `title` is delayed and ancestors with overflow clip them.
+ * Uses `peer` on the trigger so `peer-hover` / `peer-focus-visible` / `peer-active` work (active helps touch).
+ */
+const Tooltip = ({ text, children }: { text: string; children: React.ReactNode }) => (
+  <span className="relative inline-flex align-middle touch-manipulation">
     {children}
-  </p>
+    <span
+      role="tooltip"
+      className={`
+        pointer-events-none absolute left-1/2 z-[100] w-max max-w-[min(90vw,16rem)] -translate-x-1/2 rounded-lg border border-white/12
+        bg-zinc-950/98 px-2.5 py-1.5 text-left text-[11px] font-medium leading-snug text-zinc-100 shadow-xl backdrop-blur-md
+        opacity-0 transition-opacity duration-150 ease-out
+        top-full mt-2 md:top-auto md:mt-0 md:bottom-[calc(100%+10px)]
+        peer-hover:opacity-100 peer-hover:delay-75
+        peer-focus-visible:opacity-100 peer-focus-visible:delay-0
+        peer-active:opacity-100 peer-active:delay-0
+      `}
+    >
+      {text}
+    </span>
+  </span>
 );
 
-const ToggleRow = ({ label, sublabel, active, onClick, icon }: { label: string, sublabel: string, active: boolean, onClick: () => void, icon: React.ReactNode }) => (
+const IconToggle = ({
+  id,
+  active,
+  onClick,
+  icon,
+  tooltip,
+  'aria-label': ariaLabel,
+}: {
+  id?: string;
+  active: boolean;
+  onClick: () => void;
+  icon: React.ReactNode;
+  tooltip: string;
+  'aria-label'?: string;
+}) => (
   <button
-    id={`toggle-${label.toLowerCase().replace(/\s/g, '-')}`}
+    id={id}
+    type="button"
     onClick={onClick}
+    title={tooltip}
+    aria-label={ariaLabel ?? tooltip}
+    aria-pressed={active}
     className={`
-      group w-full flex items-center justify-between px-4 py-3.5 rounded-xl
-      border transition-all duration-500 cursor-pointer overflow-hidden relative
-      ${active
-        ? 'bg-blue-600/10 border-blue-500/40 shadow-[0_0_20px_rgba(59,130,246,0.1)]'
-        : 'bg-white/[0.03] border-white/5 hover:border-white/15 hover:bg-white/[0.06]'
+        peer relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border transition-all duration-300 outline-none
+        max-md:h-8 max-md:w-8 max-md:rounded-md
+        md:h-10 md:w-10 md:rounded-xl
+        focus-visible:ring-2 focus-visible:ring-blue-500/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0a]
+        ${active
+        ? 'bg-blue-600/15 border-blue-500/50 text-blue-400 shadow-[0_0_16px_rgba(59,130,246,0.12)]'
+        : 'bg-white/[0.03] border-white/8 text-zinc-500 hover:border-white/20 hover:text-zinc-300'
       }
-    `}
+      `}
   >
-    {active && <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-transparent pointer-events-none" />}
-    <span className="flex items-center gap-3.5 z-10">
-      <span className={`transition-all duration-500 ${active ? 'text-blue-400 scale-110' : 'text-white/30 group-hover:text-white/50'}`}>
-        {icon}
-      </span>
-      <span className="text-left">
-        <span className={`block text-xs font-semibold tracking-wide transition-colors ${active ? 'text-blue-100' : 'text-white/70 group-hover:text-white'}`}>
-          {label}
-        </span>
-        {sublabel && (
-          <span className="block text-[9px] text-white/20 mt-0.5 font-medium">{sublabel}</span>
-        )}
-      </span>
-    </span>
-    {/* pill toggle indicator */}
-    <span className={`relative w-8 h-4 rounded-full transition-all duration-500 flex-shrink-0 ${active ? 'bg-blue-500' : 'bg-white/10'}`}>
-      <span className={`absolute top-0.5 w-3 h-3 rounded-full transition-all duration-500 ${active ? 'left-[17px] bg-white' : 'left-0.5 bg-white/40'}`} />
-    </span>
+    {icon}
   </button>
+);
+
+/** Between tool groups: hairline on one-line mobile, taller rule on large screens */
+const GroupRule = () => (
+  <>
+    <span className="h-6 w-px shrink-0 self-center bg-white/10 md:hidden" aria-hidden />
+    <span className="hidden h-7 w-px shrink-0 self-center bg-white/10 lg:block" aria-hidden />
+  </>
 );
 
 /* ─── Main Model Component ───────────────────────────────────── */
@@ -65,6 +94,7 @@ const Model = () => {
   const [selectedColor, setSelectedColor] = useState(bmwColors[0]);
   const [eventSource, setEventSource] = useState<HTMLElement | null>(null);
 
+  const sectionRef = useRef(null);
   const cameraControlRef = useRef(null);
   const carRef = useRef(new THREE.Group());
 
@@ -79,22 +109,20 @@ const Model = () => {
     gsap.to('#model-subtext', { y: 0, opacity: 1, duration: 1, delay: 0.2, ease: 'power2.out' });
     gsap.to('#model-canvas-wrap', { opacity: 1, duration: 1.2, delay: 0.1, ease: 'power2.out' });
     gsap.to('#model-controls', { y: 0, opacity: 1, duration: 0.8, delay: 0.3, ease: 'power2.out' });
-  }, []);
+  }, { scope: sectionRef });
 
-  const handleZoom = (delta: number) => {
-    setZoom(prev => Math.min(8, Math.max(2, parseFloat((prev + delta).toFixed(1)))));
-  };
+  const toolbarAssetIcon = (on: boolean) =>
+    `pointer-events-none block h-[18px] w-[18px] max-md:h-4 max-md:w-4 object-contain brightness-0 invert transition-opacity ${on ? 'opacity-100' : 'opacity-45'}`;
 
-  // SVG Icons
-  const Icons = {
-    Headlights: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12h1m8-9v1m8 8h1m-9 8v1M5.6 5.6l.7.7m12.1 12.1l.7.7M18.4 5.6l-.7.7M5.6 18.4l-.7.7" /><circle cx="12" cy="12" r="3" /></svg>,
-    TailLights: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="3" /></svg>,
-    Door: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" /><path d="M9 12h.01" /></svg>,
-    Rotate: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" /><path d="M21 3v5h-5" /></svg>
-  };
+  const RotateIcon = (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
+      <path d="M21 3v5h-5" />
+    </svg>
+  );
 
   return (
-    <section className="sm:py-28 py-16 sm:px-10 px-5 bg-black" id="model-section">
+    <section className="sm:py-28 py-16 sm:px-10 px-5 bg-black" id="model-section" ref={sectionRef}>
       <div className="max-w-[1440px] mx-auto">
 
         {/* Heading */}
@@ -114,8 +142,6 @@ const Model = () => {
                 <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
                 360° INTERACTIVE
               </span>
-              <span className="w-[1px] h-3 bg-zinc-800" />
-              <span>SCROLL TO ZOOM</span>
             </p>
           </div>
 
@@ -137,7 +163,7 @@ const Model = () => {
           {/* ── 3-D Canvas ───────────────────────────────────── */}
           <div
             id="model-canvas-wrap"
-            className="w-full h-[60vh] md:h-[70vh] opacity-0 relative overflow-hidden rounded-[2.5rem] bg-[#050505] border border-white/[0.03] shadow-inner"
+            className="relative z-0 w-full h-[60vh] md:h-[70vh] opacity-0 overflow-hidden rounded-[2.5rem] bg-[#050505] border border-white/[0.03] shadow-inner"
           >
             <ModelView
               groupRef={carRef}
@@ -165,113 +191,123 @@ const Model = () => {
             </div>
           </div>
 
-          {/* ── Control Panel ────────────────────────── */}
+          {/* ── Control panel (responsive, overflow-visible for tooltips) ───────── */}
           <div
             id="model-controls"
-            className="w-full opacity-0 translate-y-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+            className="w-fit mx-auto max-w-full overflow-x-auto overflow-y-hidden opacity-0 translate-y-10 bg-zinc-900/40 rounded-2xl border border-white/5 px-2 py-2"
           >
-            {/* ── Paint Finish ── */}
-            <div className="bg-zinc-900/40 backdrop-blur-xl rounded-3xl p-6 border border-white/5 shadow-xl">
-              <SectionLabel>Exterior Color</SectionLabel>
-              <div className="grid grid-cols-6 gap-3 mb-5">
-                {bmwColors.map((color) => (
-                  <button
-                    key={color.label}
-                    onClick={() => setSelectedColor(color)}
-                    className={`group relative w-full aspect-square rounded-xl transition-all duration-500 ${selectedColor.label === color.label ? 'ring-2 ring-blue-500 ring-offset-4 ring-offset-[#080808] scale-95 shadow-2xl' : 'opacity-40 hover:opacity-100 hover:scale-105'
-                      }`}
-                    style={{ backgroundColor: color.hex }}
-                    title={color.label}
-                  >
-                    {selectedColor.label === color.label && (
-                      <span className="absolute inset-0 flex items-center justify-center">
-                        <span className="w-1.5 h-1.5 rounded-full bg-white shadow-sm" />
-                      </span>
-                    )}
-                  </button>
-                ))}
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-zinc-100 text-xs font-bold tracking-wide">{selectedColor.label}</span>
-                <span className="text-zinc-600 text-[10px] font-black uppercase tracking-widest">Metallic</span>
-              </div>
-            </div>
-
-            {/* ── Camera & Environment ── */}
-            <div className="bg-zinc-900/40 backdrop-blur-xl rounded-3xl p-6 border border-white/5 flex flex-col gap-6 shadow-xl">
-              <div>
-                <SectionLabel>Focal Distance</SectionLabel>
-                <div className="flex flex-col gap-3">
-                  <input
-                    type="range"
-                    min="2"
-                    max="8"
-                    step="0.1"
-                    value={zoom}
-                    onChange={(e) => setZoom(parseFloat(e.target.value))}
-                    className="w-full h-1 bg-zinc-800 rounded-full appearance-none cursor-pointer accent-blue-500 hover:accent-blue-400 transition-all"
-                  />
-                  <div className="flex justify-between items-center">
-                    <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest">Macro</span>
-                    <span className="text-[10px] font-black text-blue-500/80 tracking-tighter">{zoom.toFixed(1)}m</span>
-                    <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest">Wide</span>
-                  </div>
+            <div
+              className={`
+                flex items-center gap-3
+              `}
+            >
+              {/* Colors */}
+              <div className="flex items-center gap-3">
+                <span className="sr-only">Exterior color</span>
+                <span className="text-zinc-500 text-[9px] font-bold uppercase tracking-widest">
+                  Color
+                </span>
+                <div className="flex shrink-0 items-center gap-2">
+                  {bmwColors.map((color) => (
+                    <Tooltip key={color.label} text={`${color.label} — Metallic`}>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedColor(color)}
+                        title={`${color.label} — Metallic`}
+                        aria-label={`${color.label} — Metallic`}
+                        className={`
+                          peer relative h-6 w-6 shrink-0 rounded-md transition-all duration-300 outline-none
+                          max-md:h-5 max-md:w-5
+                          md:h-8 md:w-8 md:rounded-lg
+                          focus-visible:ring-2 focus-visible:ring-blue-500/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0a]
+                          ${selectedColor.label === color.label
+                            ? 'ring-2 ring-blue-500 ring-offset-1 ring-offset-[#0c0c0c] md:ring-offset-2 md:scale-95'
+                            : 'opacity-45 hover:opacity-100 hover:scale-105'
+                          }
+                        `}
+                        style={{ backgroundColor: color.hex }}
+                      >
+                        {selectedColor.label === color.label && (
+                          <span className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                            <span className="h-0.5 w-0.5 rounded-full bg-white shadow-sm md:h-1 md:w-1" />
+                          </span>
+                        )}
+                      </button>
+                    </Tooltip>
+                  ))}
                 </div>
               </div>
-            </div>
 
-            {/* ── Lighting Systems ── */}
-            <div className="bg-zinc-900/40 backdrop-blur-xl rounded-3xl p-6 border border-white/5 shadow-xl">
-              <SectionLabel>Lighting Systems</SectionLabel>
-              <div className="flex flex-col gap-3">
-                <ToggleRow
-                  label="BMW Laserlight"
-                  sublabel="Adaptive Front Lighting"
+              <GroupRule />
+
+              {/* Focal distance */}
+              <div className="flex shrink-0 items-center gap-1.5">
+                <span className="text-[9px] font-black uppercase tracking-tighter text-zinc-600" title="Macro (close)">
+                  Macro
+                </span>
+                <input
+                  type="range"
+                  min="2"
+                  max="8"
+                  step="0.1"
+                  value={zoom}
+                  onChange={(e) => setZoom(parseFloat(e.target.value))}
+                  title={`Focal distance — ${zoom.toFixed(1)} m`}
+                  aria-label={`Focal distance, ${zoom.toFixed(1)} meters`}
+                  className="h-1 min-w-0 flex-1 cursor-pointer appearance-none rounded-full bg-zinc-800 accent-blue-500 hover:accent-blue-400"
+                />
+                <span className="text-[9px] font-black tabular-nums text-blue-500/90" title={`Focal distance — ${zoom.toFixed(1)} m`}>
+                  {zoom.toFixed(1)}m
+                </span>
+                <span className="text-[9px] font-black uppercase tracking-tighter text-zinc-600" title="Wide (far)">
+                  Wide
+                </span>
+              </div>
+
+              <GroupRule />
+
+              {/* Lights */}
+              <div className="flex items-center gap-2">
+                <IconToggle
+                  id="toggle-bmw-laserlight"
                   active={headlightsOn}
-                  onClick={() => setHeadlightsOn(v => !v)}
-                  icon={Icons.Headlights}
+                  onClick={() => setHeadlightsOn((v) => !v)}
+                  icon={<Image src={headLightImg} alt="" width={18} height={18} className={toolbarAssetIcon(headlightsOn)} />}
+                  tooltip="BMW Laserlight — Adaptive front lighting"
                 />
-                <ToggleRow
-                  label="LED Rear Lights"
-                  sublabel="OLED Performance Glow"
+                <IconToggle
+                  id="toggle-led-rear-lights"
                   active={tailLightsOn}
-                  onClick={() => setTailLightsOn(v => !v)}
-                  icon={Icons.TailLights}
+                  onClick={() => setTailLightsOn((v) => !v)}
+                  icon={<Image src={tailLightImg} alt="" width={18} height={18} className={toolbarAssetIcon(tailLightsOn)} />}
+                  tooltip="LED rear lights — OLED performance glow"
+                />
+              </div>
+
+              <GroupRule />
+
+              {/* Doors & rotate */}
+              <div className="flex items-center gap-2">
+                <IconToggle
+                  active={driverDoorOpen}
+                  onClick={() => setDriverDoorOpen((v) => !v)}
+                  icon={<Image src={driverDoorImg} alt="" width={18} height={18} className={toolbarAssetIcon(driverDoorOpen)} />}
+                  tooltip="Driver door"
+                />
+                <IconToggle
+                  active={passengerDoorOpen}
+                  onClick={() => setPassengerDoorOpen((v) => !v)}
+                  icon={<Image src={passengerDoorImg} alt="" width={18} height={18} className={toolbarAssetIcon(passengerDoorOpen)} />}
+                  tooltip="Passenger door"
+                />
+                <IconToggle
+                  active={autoRotate}
+                  onClick={() => setAutoRotate((v) => !v)}
+                  icon={<span className={autoRotate ? 'inline-flex animate-spin-slow' : 'inline-flex'}>{RotateIcon}</span>}
+                  tooltip={autoRotate ? 'Auto rotation — on' : 'Auto rotation — off'}
                 />
               </div>
             </div>
-
-            {/* ── Dynamic Parts ── */}
-            <div className="bg-zinc-900/40 backdrop-blur-xl rounded-3xl p-6 border border-white/5 shadow-xl">
-              <SectionLabel>Interactions</SectionLabel>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  onClick={() => setDriverDoorOpen(v => !v)}
-                  className={`py-4 rounded-2xl border text-[10px] font-black uppercase tracking-widest flex flex-col items-center gap-3 transition-all duration-500 ${driverDoorOpen ? 'bg-zinc-800 border-white/20 text-white shadow-2xl' : 'bg-white/[0.02] border-white/5 text-zinc-600 hover:border-white/15'
-                    }`}
-                >
-                  <span className={driverDoorOpen ? 'text-blue-400' : 'text-zinc-700'}>{Icons.Door}</span>
-                  <span>Driver</span>
-                </button>
-                <button
-                  onClick={() => setPassengerDoorOpen(v => !v)}
-                  className={`py-4 rounded-2xl border text-[10px] font-black uppercase tracking-widest flex flex-col items-center gap-3 transition-all duration-500 ${passengerDoorOpen ? 'bg-zinc-800 border-white/20 text-white shadow-2xl' : 'bg-white/[0.02] border-white/5 text-zinc-600 hover:border-white/15'
-                    }`}
-                >
-                  <span className={passengerDoorOpen ? 'text-blue-400' : 'text-zinc-700'}>{Icons.Door}</span>
-                  <span>Passen.</span>
-                </button>
-                <button
-                  onClick={() => setAutoRotate(v => !v)}
-                  className={`col-span-2 py-3 rounded-2xl border text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-3 transition-all duration-500 ${autoRotate ? 'bg-blue-600/10 border-blue-500/30 text-blue-400 shadow-xl' : 'bg-white/[0.02] border-white/5 text-zinc-600 hover:border-white/15'
-                    }`}
-                >
-                  <span className={autoRotate ? 'animate-spin-slow' : ''}>{Icons.Rotate}</span>
-                  <span>{autoRotate ? 'Auto Rotation On' : 'Auto Rotation Off'}</span>
-                </button>
-              </div>
-            </div>
-
           </div>
         </div>
       </div>

@@ -43,10 +43,10 @@ export const hightlightsSlides = [
 ];
 
 export const bmwColors = [
+  { label: "Sapphire Black", hex: "#535457" },
   { label: "Isle of Man Green", hex: "#2D5A27" },
   { label: "M Portimao Blue", hex: "#1C3F6E" },
   { label: "Alpine White", hex: "#F0EEE9" },
-  { label: "Sapphire Black", hex: "#0F0F12" },
   { label: "Toronto Red", hex: "#B31B1B" },
   { label: "Sao Paulo Yellow", hex: "#E9F13B" },
 ];
