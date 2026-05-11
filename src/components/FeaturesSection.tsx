@@ -77,7 +77,7 @@ export const BentoCard = ({
 };
 
 const FeaturesSection = () => (
-  <section className="bg-black mx-auto px-10 md:px-[10%] py-32">
+  <section id="features" className="bg-black mx-auto px-10 md:px-[10%] py-32">
     <div className="px-5">
       <p className="font-circular-web text-lg text-blue-50">
         BMW M4 · Competition DNA

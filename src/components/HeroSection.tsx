@@ -37,7 +37,7 @@ function HeroModelTitleStack({
   return (
     <div
       {...(scrollSync ? { "data-hero-scroll-model": true } : {})}
-      className={`absolute top-24 left-5 max-w-[min(92vw,56rem)] ${text} ${z} ${back} ${passThrough}`}
+      className={`absolute top-34 left-5 max-w-[min(92vw,56rem)] ${text} ${z} ${back} ${passThrough}`}
     >
       {MODEL_LINES.map((word) => (
         <div key={word} className="overflow-hidden">
@@ -53,6 +53,9 @@ function HeroModelTitleStack({
         className={`mt-3 h-0.5 w-48 bg-gradient-to-r ${tone === "light" ? "from-white to-transparent" : "from-blue-600 to-transparent"}`}
         aria-hidden
       />
+      <p className={`text-sm mt-2 ${tone === "light" ? "text-white" : "text-blue-600"}`}>
+        The most capable M4 ever built — now yours to explore. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
+      </p>
     </div>
   );
 }
@@ -166,11 +169,11 @@ const HeroSection = () => {
     tl.fromTo(
       "#video-frame",
       { clipPath: "inset(0% 0% 0% 0% round 0px)" },
-      { clipPath: "inset(10% 10% 10% 10% round 24px)", ease: "power1.inOut" },
+      { clipPath: "inset(11% 10% 11% 10% round 24px)", ease: "power1.inOut" },
       0
     );
 
-    tl.to(".top-hero-content", { left: "12%", bottom: "13%", ease: "power1.inOut" }, 0);
+    tl.to(".top-hero-content", { left: "12%", bottom: "15%", ease: "power1.inOut" }, 0);
     tl.to("[data-hero-scroll-model]", { top: "10%", ease: "power1.inOut" }, 0);
     tl.to(".hero-overlay-gradient", { opacity: 0.85, ease: "power1.inOut" }, 0);
   });
@@ -208,7 +211,7 @@ const HeroSection = () => {
             <button
               type="button"
               onClick={handleMiniVdClick}
-              className="relative z-[1] block size-full cursor-pointer overflow-hidden rounded-2xl text-left outline-none touch-manipulation focus-visible:ring-2 focus-visible:ring-blue-400/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+              className="relative z-[1] block size-full cursor-pointer overflow-hidden text-left outline-none touch-manipulation"
             >
               <video
                 ref={previewVideoRef}
@@ -244,19 +247,20 @@ const HeroSection = () => {
       {/* ── Video Frame ── */}
       <div
         id="video-frame"
-        className="relative z-10 h-dvh w-screen overflow-hidden bg-zinc-900"
+        className="relative z-10 h-dvh w-screen overflow-hidden bg-zinc-900 "
       >
+        <div className="absolute w-[60vw] h-full left-0 top-0 bottom-0 z-10 bg-gradient-to-r from-black/50 to-transparent" />
         {/* Dark gradient overlay (intensifies on scroll) */}
-        <div className="hero-overlay-gradient absolute inset-0 z-10 bg-gradient-to-b from-black/60 via-black/20 to-black/70 opacity-60 pointer-events-none" />
+        {/* <div className="hero-overlay-gradient absolute inset-0 z-10 bg-gradient-to-b from-black/60 via-black/20 to-black/70 opacity-60 pointer-events-none" /> */}
 
         {/* Subtle animated grain texture */}
-        <div className="absolute inset-0 z-10 opacity-[0.03] pointer-events-none"
+        {/* <div className="absolute inset-0 z-10 opacity-[0.03] pointer-events-none"
           style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")", backgroundSize: "128px" }}
-        />
+        /> */}
 
         {/* Cinematic letterbox lines */}
-        <div className="hero-bar-top pointer-events-none absolute top-0 left-0 right-0 z-30 h-[3px] origin-left bg-gradient-to-r from-transparent via-blue-400/70 to-transparent" />
-        <div className="hero-bar-bottom pointer-events-none absolute bottom-0 left-0 right-0 z-30 h-[3px] origin-right bg-gradient-to-r from-transparent via-blue-400/70 to-transparent" />
+        {/* <div className="hero-bar-top pointer-events-none absolute top-0 left-0 right-0 z-30 h-[3px] origin-left bg-gradient-to-r from-transparent via-blue-400/70 to-transparent" />
+        <div className="hero-bar-bottom pointer-events-none absolute bottom-0 left-0 right-0 z-30 h-[3px] origin-right bg-gradient-to-r from-transparent via-blue-400/70 to-transparent" /> */}
 
         {/* Expanding “next” clip — styled tile until GSAP expands it */}
         <video
@@ -267,7 +271,7 @@ const HeroSection = () => {
           playsInline
           preload="auto"
           id="next-video"
-          className="pointer-events-none absolute top-1/2 left-1/2 z-20 size-64 -translate-x-1/2 -translate-y-1/2 invisible overflow-hidden rounded-2xl border border-white/15 bg-zinc-950 object-cover object-center shadow-[0_0_0_1px_rgba(59,130,246,0.12),0_24px_80px_-20px_rgba(0,0,0,0.85),0_0_60px_-12px_rgba(41,151,255,0.35)] ring-2 ring-blue-500/40 ring-offset-2 ring-offset-zinc-950"
+          className="pointer-events-none absolute top-1/2 left-1/2 z-20 size-64 -translate-x-1/2 -translate-y-1/2 invisible overflow-hidden  object-cover object-center shadow-[0_0_0_1px_rgba(59,130,246,0.12),0_24px_80px_-20px_rgba(0,0,0,0.85),0_0_60px_-12px_rgba(41,151,255,0.35)]"
         />
 
         {/* Background video */}
@@ -285,10 +289,10 @@ const HeroSection = () => {
         />
 
         {/* ── Corner accent badge ── */}
-        <div className="pointer-events-none absolute top-6 right-6 z-40 flex flex-col items-end gap-1">
+        {/* <div className="pointer-events-none absolute top-6 right-6 z-40 flex flex-col items-end gap-1">
           <span className="text-[10px] font-black tracking-[0.25em] text-blue-400 uppercase">M Series</span>
           <span className="text-[10px] font-medium tracking-widest text-white/50 uppercase">2025 Edition</span>
-        </div>
+        </div> */}
 
         {/* <HeroBmwWordmark tone="light" /> */}
 
