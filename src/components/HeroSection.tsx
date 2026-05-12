@@ -10,7 +10,6 @@ import { useEffect, useRef, useState } from "react";
 import Button from "./common/Button";
 import { BentoTilt } from "./common/BentoTilt";
 import VideoPreview from "./common/VideoPreview";
-import Loader from "./common/loader";
 import { bmw5, bmw6, bmw7, bmw9 } from "@/utils";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -60,26 +59,38 @@ function HeroModelTitleStack({
 }
 
 
-const HeroSection = () => {
+const HeroSection = ({
+  isParentLoading,
+  onLoaded,
+}: {
+  isParentLoading: boolean;
+  onLoaded: () => void;
+}) => {
   const [currentIndex, setCurrentIndex] = useState(1);
   const [hasClicked, setHasClicked] = useState(false);
-  const [loading, setLoading] = useState(true);
 
   const totalVideos = 4;
   const previewVideoRef = useRef<HTMLVideoElement>(null);
   const expandVideoRef = useRef<HTMLVideoElement>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
   const loaderDismissedRef = useRef(false);
+  const loadStartTime = useRef(Date.now());
 
   const dismissLoader = () => {
     if (loaderDismissedRef.current) return;
-    loaderDismissedRef.current = true;
-    setLoading(false);
+
+    const elapsed = Date.now() - loadStartTime.current;
+    const minTime = 1500;
+    const remaining = Math.max(0, minTime - elapsed);
+
+    setTimeout(() => {
+      loaderDismissedRef.current = true;
+      onLoaded();
+    }, remaining);
   };
 
-  // Main hero is ready when the fullscreen background clip can play (single source of truth).
   useEffect(() => {
-    const maxWaitMs = 12000;
+    const maxWaitMs = 15000;
     const t = window.setTimeout(() => dismissLoader(), maxWaitMs);
     return () => window.clearTimeout(t);
   }, []);
@@ -89,7 +100,6 @@ const HeroSection = () => {
     setCurrentIndex((prevIndex) => (prevIndex % totalVideos) + 1);
   };
 
-  // Mini video click → expand animation
   useGSAP(
     () => {
       if (hasClicked) {
@@ -116,17 +126,14 @@ const HeroSection = () => {
     { dependencies: [currentIndex], revertOnUpdate: true }
   );
 
-  // Entrance animations (runs once after load)
   useGSAP(() => {
-    if (loading) return;
+    if (isParentLoading) return;
 
     const tl = gsap.timeline({ delay: 0.2 });
 
-    // Cinematic letterbox bars
     tl.from(".hero-bar-top", { scaleX: 0, duration: 0.8, ease: "power3.out" }, 0);
     tl.from(".hero-bar-bottom", { scaleX: 0, duration: 0.8, ease: "power3.out" }, 0);
 
-    // BMW heading — letter stagger (in-frame only)
     tl.from("#video-frame .hero-bmw-char", {
       y: 120,
       opacity: 0,
@@ -136,7 +143,6 @@ const HeroSection = () => {
       ease: "back.out(1.4)",
     }, 0.2);
 
-    // Model name fade + slide (text lines only — keeps backdrop/foreground in sync)
     tl.from("#video-frame [data-hero-model-text]", {
       x: -60,
       opacity: 0,
@@ -145,14 +151,10 @@ const HeroSection = () => {
       ease: "power3.out",
     }, 0.5);
 
-    // CTA block
     tl.from(".hero-cta", { y: 30, opacity: 0, duration: 0.7, ease: "power2.out" }, 0.9);
-
-    // Scroll indicator
     tl.from(".hero-scroll-hint", { opacity: 0, y: 10, duration: 0.6 }, 1.5);
-  }, { dependencies: [loading] });
+  }, { dependencies: [isParentLoading] });
 
-  // Scroll-driven clip + content parallax
   useGSAP(() => {
     const tl = gsap.timeline({
       scrollTrigger: {
@@ -193,18 +195,13 @@ const HeroSection = () => {
       ref={sectionRef}
       className="relative h-screen w-screen overflow-x-hidden"
     >
-      {loading && <Loader />}
-
-      {/* <HeroBmwWordmark tone="dark" /> */}
       <HeroModelTitleStack tone="dark" scrollSync entranceTargets={false} />
 
-      {/* Next reel — bento tilt + responsive (clear of CTA on small screens) */}
       <BentoTilt
         tiltStrength={4}
         hoverScale={0.97}
         className="absolute z-[60] max-md:left-1/2 max-md:right-auto max-md:h-[118px] max-md:w-[min(calc(100vw-2.5rem),240px)] max-md:-translate-x-1/2 max-md:bottom-[1.25rem] md:left-auto md:right-5 md:h-[140px] md:w-[250px] md:translate-x-0 md:bottom-7"
       >
-        {/* `group` on inner node: hover styles + transform parent stay predictable for hit-testing */}
         <div className="group relative size-full">
           <VideoPreview>
             <button
@@ -243,25 +240,12 @@ const HeroSection = () => {
       </BentoTilt>
 
 
-      {/* ── Video Frame ── */}
       <div
         id="video-frame"
         className="relative z-10 h-screen w-screen overflow-hidden bg-zinc-900 will-change-transform"
       >
         <div className="absolute w-[60vw] h-full left-0 top-0 bottom-0 z-10 bg-gradient-to-r from-black/50 to-transparent" />
-        {/* Dark gradient overlay (intensifies on scroll) */}
-        {/* <div className="hero-overlay-gradient absolute inset-0 z-10 bg-gradient-to-b from-black/60 via-black/20 to-black/70 opacity-60 pointer-events-none" /> */}
 
-        {/* Subtle animated grain texture */}
-        {/* <div className="absolute inset-0 z-10 opacity-[0.03] pointer-events-none"
-          style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")", backgroundSize: "128px" }}
-        /> */}
-
-        {/* Cinematic letterbox lines */}
-        {/* <div className="hero-bar-top pointer-events-none absolute top-0 left-0 right-0 z-30 h-[3px] origin-left bg-gradient-to-r from-transparent via-blue-400/70 to-transparent" />
-        <div className="hero-bar-bottom pointer-events-none absolute bottom-0 left-0 right-0 z-30 h-[3px] origin-right bg-gradient-to-r from-transparent via-blue-400/70 to-transparent" /> */}
-
-        {/* Expanding “next” clip — styled tile until GSAP expands it */}
         <video
           ref={expandVideoRef}
           src={getVideoSrc(currentIndex)}
@@ -273,7 +257,6 @@ const HeroSection = () => {
           className="pointer-events-none absolute top-1/2 left-1/2 z-20 size-64 -translate-x-1/2 -translate-y-1/2 invisible overflow-hidden  object-cover object-center shadow-[0_0_0_1px_rgba(59,130,246,0.12),0_24px_80px_-20px_rgba(0,0,0,0.85),0_0_60px_-12px_rgba(41,151,255,0.35)]"
         />
 
-        {/* Background video */}
         <video
           src={getVideoSrc(currentIndex === totalVideos - 1 ? 1 : currentIndex)}
           autoPlay
@@ -283,23 +266,12 @@ const HeroSection = () => {
           preload="auto"
           className="pointer-events-none absolute left-0 top-0 size-full object-cover object-center"
           onLoadedData={dismissLoader}
-          onCanPlay={dismissLoader}
+          onCanPlayThrough={dismissLoader}
           onError={dismissLoader}
         />
 
-        {/* ── Corner accent badge ── */}
-        {/* <div className="pointer-events-none absolute top-6 right-6 z-40 flex flex-col items-end gap-1">
-          <span className="text-[10px] font-black tracking-[0.25em] text-blue-400 uppercase">M Series</span>
-          <span className="text-[10px] font-medium tracking-widest text-white/50 uppercase">2025 Edition</span>
-        </div> */}
-
-        {/* <HeroBmwWordmark tone="light" /> */}
-
-        {/* ── Model heading (top left) — must mirror backdrop stack pixel-for-pixel ── */}
         <HeroModelTitleStack tone="light" scrollSync entranceTargets />
 
-
-        {/* ── CTA block (bottom left) ── */}
         <div className="md:hidden hero-cta absolute flex flex-col items-center bottom-[8rem] left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 max-w-[calc(100vw-2.5rem)] md:max-w-[min(42rem,calc(100vw-18rem))] lg:max-w-[800px]">
           <Button
             id="watch-trailer"
@@ -326,7 +298,6 @@ const HeroSection = () => {
           </p>
         </div>
 
-        {/* ── Scroll hint ── */}
         <div className="hero-scroll-hint absolute bottom-32 right-4 z-40 flex flex-col items-center gap-1 md:bottom-36 md:right-6">
           <span className="text-[9px] tracking-[0.3em] text-white/30 uppercase rotate-90 mb-2">Scroll</span>
           <div className="w-[1px] mt-5 h-10 bg-gradient-to-b from-blue-400/60 to-transparent" />
