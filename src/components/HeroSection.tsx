@@ -6,7 +6,6 @@ import { ScrollTrigger } from "gsap/all";
 import { IoIosPlayCircle } from "react-icons/io";
 import { TiLocationArrow } from "react-icons/ti";
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 
 import Button from "./common/Button";
 import { BentoTilt } from "./common/BentoTilt";

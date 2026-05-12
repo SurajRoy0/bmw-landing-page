@@ -119,7 +119,7 @@ const Model = () => {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-12 gap-6">
           <div className="min-w-0">
             <p className="text-blue-500/90 text-[10px] sm:text-xs font-bold uppercase tracking-[0.35em] mb-3 sm:mb-4">
-              ///M Configurator
+              {'///M Configurator'}
             </p>
             <h1
               id="model-heading"

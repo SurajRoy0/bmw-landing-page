@@ -1,7 +1,5 @@
 "use client";
 
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { BsPauseFill, BsPlayFill, BsTelephone } from "react-icons/bs";
