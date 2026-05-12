@@ -86,7 +86,20 @@ const Model = () => {
     gsap.to('#model-subtext', { y: 0, opacity: 1, duration: 1, delay: 0.2, ease: 'power2.out' });
     gsap.to('#model-canvas-wrap', { opacity: 1, duration: 1.2, delay: 0.1, ease: 'power2.out' });
     gsap.to('#model-controls', { y: 0, opacity: 1, duration: 0.8, delay: 0.3, ease: 'power2.out' });
+    gsap.fromTo(
+      '.model-stat',
+      { y: 16, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.7, delay: 0.35, ease: 'power2.out', stagger: 0.08 }
+    );
   }, { scope: sectionRef });
+
+  const headerStats = [
+    { label: '0–60 mph', value: '3.8', unit: 's' },
+    { label: 'Top Speed', value: '180', unit: 'mph' },
+    { label: 'Power', value: '503', unit: 'hp' },
+    { label: 'Torque', value: '479', unit: 'lb-ft' },
+    { label: 'Engine', value: '3.0', unit: 'L Twin-Turbo I6' },
+  ];
 
   const toolbarAssetIcon = (on: boolean) =>
     `pointer-events-none block h-[18px] w-[18px] max-md:h-4 max-md:w-4 object-contain brightness-0 invert transition-opacity ${on ? 'opacity-100' : 'opacity-45'}`;
@@ -103,35 +116,70 @@ const Model = () => {
       <div className="max-w-[1440px] mx-auto">
 
         {/* Heading */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
-          <div>
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-12 gap-6">
+          <div className="min-w-0">
+            <p className="text-blue-500/90 text-[10px] sm:text-xs font-bold uppercase tracking-[0.35em] mb-3 sm:mb-4">
+              ///M Configurator
+            </p>
             <h1
               id="model-heading"
-              className="text-white lg:text-7xl md:text-5xl text-4xl font-semibold tracking-tight opacity-0 translate-y-16 mb-4"
+              className="text-white lg:text-7xl md:text-5xl text-4xl font-semibold tracking-tight opacity-0 translate-y-16 mb-3 sm:mb-4"
             >
               M4 Competition.
             </h1>
+            <p className="text-zinc-400 text-sm sm:text-base max-w-xl leading-relaxed mb-4">
+              Built on the G82 chassis with a hand-assembled S58 inline-six,
+              M xDrive, and an 8-speed M Steptronic—shaped in the wind tunnel,
+              tuned on the Nürburgring.
+            </p>
             <p
               id="model-subtext"
-              className="text-zinc-500 text-sm font-medium opacity-0 translate-y-8 flex items-center gap-4"
+              className="text-zinc-500 text-[11px] sm:text-xs font-bold uppercase tracking-widest opacity-0 translate-y-8 flex flex-wrap items-center gap-x-4 gap-y-2"
             >
               <span className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                360° INTERACTIVE
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                360° Interactive
               </span>
+              <span className="text-white/10">|</span>
+              <span>Real-time Configurator</span>
+              <span className="text-white/10">|</span>
+              <span>Live Color &amp; Lights</span>
             </p>
           </div>
 
           {/* Car Badge */}
-          <div className="bg-zinc-900/50 backdrop-blur-2xl rounded-2xl p-5 border border-white/5 flex items-center gap-4 shadow-2xl">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-900 flex items-center justify-center flex-shrink-0 shadow-lg">
+          <div className="bg-zinc-900/50 backdrop-blur-2xl rounded-2xl p-4 sm:p-5 border border-white/5 flex items-center gap-3 sm:gap-4 shadow-2xl self-start md:self-auto">
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-900 flex items-center justify-center flex-shrink-0 shadow-lg">
               <span className="text-white font-black text-lg italic tracking-tighter">M</span>
             </div>
             <div>
-              <p className="text-white text-base font-bold tracking-tight">G82 M4 COMPETITION</p>
-              <p className="text-zinc-500 text-[11px] font-bold uppercase tracking-widest mt-0.5">Performance Configurator</p>
+              <p className="text-white text-sm sm:text-base font-bold tracking-tight">G82 M4 COMPETITION</p>
+              <p className="text-zinc-500 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest mt-0.5">Performance Configurator</p>
             </div>
           </div>
+        </div>
+
+        {/* Performance Stats Strip */}
+        <div className="relative mb-8 sm:mb-12 rounded-2xl border border-white/5 bg-gradient-to-r from-zinc-900/60 via-zinc-900/30 to-zinc-900/60 backdrop-blur-xl overflow-hidden">
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-blue-500 via-blue-600 to-transparent" aria-hidden />
+          <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 divide-x divide-white/5">
+            {headerStats.map((stat) => (
+              <li
+                key={stat.label}
+                className="model-stat opacity-0 px-4 sm:px-5 py-4 sm:py-5 flex flex-col gap-1"
+              >
+                <span className="text-zinc-500 text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.2em]">
+                  {stat.label}
+                </span>
+                <span className="text-white font-semibold tracking-tight leading-none flex items-baseline gap-1">
+                  <span className="text-2xl sm:text-3xl tabular-nums">{stat.value}</span>
+                  <span className="text-[10px] sm:text-xs font-bold text-zinc-400 uppercase tracking-wider">
+                    {stat.unit}
+                  </span>
+                </span>
+              </li>
+            ))}
+          </ul>
         </div>
 
         {/* Main layout */}
